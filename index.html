@@ -3,93 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animasi Partikel Hati</title>
+    <title>I Love You Animation</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; }
-        canvas { display: block; }
-        svg { display: none; }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #ffebee;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+        }
+
+        .heart {
+            font-size: 100px;
+            color: #e91e63;
+            animation: pulse 1.2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #ad1457;
+            margin-top: 20px;
+        }
+
+        #show-code {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        #show-code:hover {
+            background-color: #c2185b;
+        }
+
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 90%;
+            overflow-x: auto;
+            display: none; /* Sembunyi di awal */
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Template bentuk hati -->
-    <svg viewBox="0 0 600 552">
-        <path id="heart-path" d="M300,521.1L267.7,489.2C106.3,342.3,0,245.3,0,128.5C0,33.3,74.1,0,148.2,0c41.8,0,81.9,19.4,108.4,50.1 c26.5-30.7,66.6-50.1,108.4-50.1C439.1,0,513.2,33.3,513.2,128.5c0,116.8-106.3,213.8-267.7,360.8L300,521.1z"></path>
-    </svg>
+    <div class="heart">❤️</div>
+    <h1>I Love You!</h1>
 
-    <!-- Library yang dibutuhkan (Sudah diperbaiki) -->
-    <script src="https://cloudflare.com"></script>
-    <script src="https://cloudflare.com"></script>
+    <button id="show-code">Klik untuk Lihat Codingan</button>
+
+    <pre id="code-display"></pre>
 
     <script>
-        // 1. SETUP DASAR
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 400;
+        const btn = document.getElementById('show-code');
+        const display = document.getElementById('code-display');
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
-
-        // 2. MENGAMBIL TITIK DARI SVG
-        const path = document.querySelector("#heart-path");
-        const length = path.getTotalLength();
-        const vertices = [];
-        const initialPositions = [];
-
-        // Buat 1500 partikel mengikuti alur hati
-        for (let i = 0; i < length; i += 0.4) {
-            const point = path.getPointAtLength(i);
+        btn.addEventListener('click', () => {
+            // Mengambil seluruh isi HTML dari dokumen ini
+            const sourceCode = document.documentElement.outerHTML;
             
-            // Atur posisi agar di tengah
-            const x = point.x - 300;
-            const y = -point.y + 276;
-            const z = (Math.random() - 0.5) * 50;
-
-            const vector = new THREE.Vector3(x, y, z);
-            vertices.push(vector);
+            // Menampilkan dalam tag <pre>
+            display.textContent = sourceCode;
+            display.style.display = 'block';
             
-            // Simpan posisi awal untuk animasi meledak
-            initialPositions.push({ x: 0, y: 0, z: 0 });
-        }
-
-        const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-        const material = new THREE.PointsMaterial({ 
-            color: 0xff4d6d, // Warna Pink Hati
-            size: 2, 
-            blending: THREE.AdditiveBlending 
-        });
-        const particles = new THREE.Points(geometry, material);
-        scene.add(particles);
-
-        // 3. ANIMASI GSAP (EFEK MELEDAK JADI HATI)
-        vertices.forEach((v, i) => {
-            gsap.from(v, {
-                x: 0,
-                y: 0,
-                z: 0,
-                duration: Math.random() * 3 + 2,
-                ease: "power2.out",
-                delay: Math.random() * 1
-            });
-        });
-
-        // Rotasi otomatis agar terlihat 3D
-        function animate() {
-            requestAnimationFrame(animate);
-            particles.rotation.y += 0.005;
-            geometry.setFromPoints(vertices); // Update posisi partikel
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // 4. RESPONSIF LAYAR
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Scroll otomatis ke bawah agar kode terlihat
+            display.scrollIntoView({ behavior: 'smooth' });
+            
+            btn.innerText = "Ini Kodenya! ✨";
         });
     </script>
+
 </body>
 </html>
